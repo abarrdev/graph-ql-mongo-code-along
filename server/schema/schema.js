@@ -18,19 +18,21 @@ let businessesData = [
 	{id: '5', name: 'Vishu', category: 'convenience'}
 ]
 let ratingsData = [
-	{id: '1', category: 'health'},
-	{id: '2', category: 'clean'},
-	{id: '3', category: 'distance'},
-	{id: '4', category: 'contactless'}
+	{id: '1', userID: '2', businessID: '5', health: 4, clean: 3, distance: 4, contactless: 4},
+	{id: '2', userID: '1', businessID: '3', health: 4, clean: 5, distance: 5, contactless: 3},
+	{id: '3', userID: '3', businessID: '1', health: 5, clean: 4, distance: 3, contactless: 5},
+	{id: '4', userID: '5', businessID: '2', health: 4, clean: 5, distance: 4, contactless: 3}
 ]
 
 
 //destructuring graphql.datatypes
 const {
 	GraphQLObjectType,
+	GraphQLSchema,
 	GraphQLID,
+	GraphQL
 	GraphQLString,
-	GraphQLSchema
+	GraphQLInt,
 } = graphql
 
 
@@ -59,7 +61,16 @@ const RatingType = new GraphQLObjectType({
 	description: 'ratings categories',
 	fields: () => ({
 		id: {type: GraphQLID},
-		category: {type: GraphQLString}
+		health: {type: GraphQLInt},
+		clean: {type: GraphQLInt},
+		distance: {type: GraphQLInt},
+		contactless: {type: GraphQLInt},
+		user: {
+			type: UserType,
+			resolve(parent, args) {
+				return _.find(usersData, {id: parent.userID})
+			}
+		}
 	})
 })
 
@@ -72,7 +83,6 @@ const RootQuery = new GraphQLObjectType({
 		user: {
 			type: UserType, //references UserType above
 			args: {id: {type: GraphQLID}},
-
 			resolve(parent, args) {
 				//get and return data from source here
 				return _.find(usersData, {id: args.id})
@@ -81,7 +91,6 @@ const RootQuery = new GraphQLObjectType({
 		business: {
 			type: BusinessType,
 			args: {id: {type: GraphQLID}},
-			
 			resolve(parent, args) {
 				return _.find(businessesData, {id: args.id})
 			}
@@ -89,7 +98,6 @@ const RootQuery = new GraphQLObjectType({
 		rating: {
 			type: RatingType,
 			args: {id: {type: GraphQLID}},
-
 			resolve(parent, args) {
 				return _.find(ratingsData, {id: args.id})
 			}
