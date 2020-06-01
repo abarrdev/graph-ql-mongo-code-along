@@ -30,7 +30,6 @@ const {
 	GraphQLObjectType,
 	GraphQLSchema,
 	GraphQLID,
-	GraphQL
 	GraphQLString,
 	GraphQLInt,
 } = graphql
@@ -69,6 +68,12 @@ const RatingType = new GraphQLObjectType({
 			type: UserType,
 			resolve(parent, args) {
 				return _.find(usersData, {id: parent.userID})
+			}
+		},
+		business: {
+			type: BusinessType,
+			resolve(parent, args) {
+				return _.find(businessesData, {id: parent.businessID})
 			}
 		}
 	})
@@ -109,3 +114,7 @@ const RootQuery = new GraphQLObjectType({
 module.exports = new GraphQLSchema({
 	query: RootQuery
 })
+
+
+//to start server, cd into <project_name>/server
+//in command line, run "nodemon app"
